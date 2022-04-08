@@ -9,7 +9,7 @@ namespace Mvc101.Services.EmailService
     public class OutlookEmailService : IEmailService
     {
         public string SenderMail => "yhan-96@hotmail.com";
-        public string Password => "galata96.yd";
+        public string Password => "*****";
         public string Smtp => "smtp-mail.outlook.com";
         public int SmtpPort => 587;
 
