@@ -36,6 +36,11 @@ namespace Mvc101.Services.EmailService
                 foreach (var attach in model.Attachs)
                 {
                     //mail.Attachments.Add(new Attachment(attach));
+                    //mail.Attachments.Add(new Attachment(attach));
+                    var fileStream = attach as FileStream;
+                    var info = new FileInfo(fileStream.Name);
+
+                    mail.Attachments.Add(new Attachment(attach, info.Name));
                 }
             }
 

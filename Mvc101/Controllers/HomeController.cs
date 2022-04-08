@@ -10,11 +10,13 @@ namespace Mvc101.Controllers
     {
         private readonly ISmsService _smsService;
         private readonly IEmailService _emailService;
+        private readonly IWebHostEnvironment _appEnvironment;
 
-        public HomeController(ISmsService smsService, IEmailService emailService)
+        public HomeController(ISmsService smsService, IEmailService emailService, IWebHostEnvironment appEnvironment)
         {
             _smsService = smsService;
             _emailService = emailService;
+            _appEnvironment = appEnvironment;
         }
 
         public IActionResult Index()
@@ -28,6 +30,8 @@ namespace Mvc101.Controllers
             var wissenSms = (WissenSmsService)_smsService;
             Debug.WriteLine(wissenSms.EndPoint);
 
+            var fileStream = new FileStream(@$"{_appEnvironment.WebRootPath}\files\traplord.jpg", FileMode.Open);
+
             _emailService.SendMailAsync(new MailModel()
             {
                 To = new List<EmailModel>()
@@ -39,7 +43,11 @@ namespace Mvc101.Controllers
                     }
                 },
                 Subject = "Index Açıldı",
-                Body = "Bu emailin body kısmıdır"
+                Body = "Bu emailin body kısmıdır",
+                Attachs = new List<Stream>()
+                {
+                    fileStream
+                }
             });
 
             return View();
