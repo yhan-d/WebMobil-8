@@ -30,8 +30,8 @@ namespace Identity101.ViewModels
 
         [Required(ErrorMessage = "Şifre tekrar alanı gereklidir.")]
         [DataType(DataType.Password)]
-        [Display(Name = "Şifre")]
-        [Compare(nameof(Password),ErrorMessage ="Şifreler uyuşmuyor")]
+        [Display(Name = "Şifre Tekrar")]
+        [Compare("Password",ErrorMessage ="Şifreler uyuşmuyor")]
         public string ConfirmPassword { get; set;}
     }
 }

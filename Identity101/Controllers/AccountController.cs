@@ -14,29 +14,30 @@ namespace Identity101.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet]
+        [HttpGet("~/kayit-ol")]
         public IActionResult Register()
         {
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("~/kayit-ol")]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 ModelState.AddModelError(string.Empty, "Bir hata oluştu");
                 return View(model);
             }
-            
-            var user = new ApplicationUser { 
-                UserName = model.UserName, 
+
+            var user = new ApplicationUser
+            {
+                UserName = model.UserName,
                 Email = model.Email,
                 Name = model.Name,
                 Surname = model.Surname
             };
-            
-            var result = await _userManager.CreateAsync(user,model.Password);
+
+            var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
                 //TODO: Email gönderme - Aktivasyon
@@ -47,6 +48,15 @@ namespace Identity101.Controllers
             ModelState.AddModelError(string.Empty, messages);
 
             return View(model);
+
+
         }
+        public IActionResult Login()
+        {
+            return View();
+        }
+        
+        
+
     }
 }
