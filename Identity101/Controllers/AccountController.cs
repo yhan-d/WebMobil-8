@@ -159,5 +159,9 @@ namespace Identity101.Controllers
             return RedirectToAction("Index","Home");
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
     }
 }
