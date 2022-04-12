@@ -119,13 +119,13 @@ namespace Identity101.Controllers
             return View();
         }
 
-        [HttpGet("~/giris-yap")]
+        [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
         
-        [HttpPost("~/giris-yap")]
+        [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid) { return View(model); }
