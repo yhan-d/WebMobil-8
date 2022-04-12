@@ -1,5 +1,6 @@
 using Identity101.Data;
 using Identity101.Models.Identity;
+using Identity101.Services.Email;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +41,7 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+builder.Services.AddTransient<IEmailService, OutlookEmailService>();
 builder.Services.AddControllersWithViews();
 
 
