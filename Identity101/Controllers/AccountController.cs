@@ -16,11 +16,13 @@ namespace Identity101.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
         private readonly RoleManager<ApplicationRole> _roleManager;
-        public AccountController(UserManager<ApplicationUser> userManager,IEmailService emailService,RoleManager<ApplicationRole> roleManager)
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        public AccountController(UserManager<ApplicationUser> userManager,IEmailService emailService,RoleManager<ApplicationRole> roleManager,SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _emailService = emailService;
             _roleManager = roleManager;
+            _signInManager = signInManager;
             CheckRoles();
         }
         
@@ -117,11 +119,37 @@ namespace Identity101.Controllers
             return View();
         }
 
+        [HttpGet("~/giris-yap")]
         public IActionResult Login()
         {
             return View();
         }
         
+        [HttpPost("~/giris-yap")]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid) { return View(model); }
+            
+                var user = await _userManager.FindByNameAsync(model.UserName);
+
+                var result =  await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if(result.IsLockedOut)
+            {
+                 // TODO: Kilitlenmişse ne yapılacağı
+            }
+            else if(result.RequiresTwoFactor)
+            {
+                //TODO: 2fa yönlendirmesi yapılacak
+            }
+
+                ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifre hatalı");
+                return View(model);
+           
+        }
         
 
     }
