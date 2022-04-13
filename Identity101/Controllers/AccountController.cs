@@ -257,6 +257,89 @@ namespace Identity101.Controllers
             
         }
 
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Profile()
+        {
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+
+            var model = new UserProfileViewModel()
+            {
+                Email = user.Email,
+                Name = user.Name,
+                Surname = user.Surname
+            };
+            return View(model);
+        }
+
+        [Authorize,HttpPost]
+        public async Task<IActionResult> Profile(UserProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+
+            user.Name = model.Name;
+            user.Surname = model.Surname;
+            user.Email = model.Email;
+            if(user.Email != model.Email)
+            {
+                await _userManager.AddToRoleAsync(user,Roles.Passive);
+                //TODO: Email gönderme - Aktivasyon
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, Request.Scheme);
+
+                var email = new MailModel()
+                {
+                    To = new List<EmailModel>
+                    {
+                        new EmailModel(){
+
+                            Adress = user.Email,
+                            Name = user.UserName
+                        }
+                    },
+
+                    Body = $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.",
+                    Subject = "Confirm your email"
+                };
+                await _emailService.SendMailAsync(email);
+                //TODO: Login olma
+                return RedirectToAction("Login");
+            }
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded)
+            {
+                ViewBag.Message = "Güncelleme başarılı";
+            }
+            else
+            {
+                var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+                ViewBag.Message = message;
+            }
+
+            return View(model);
+            
+        }
+
+        [Authorize,HttpGet]
+        public async Task<IActionResult> ChangePassword()
+        {
+            var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
+
+            var model = new UserProfileViewModel()
+            {
+                Email = user.Email,
+                Name = user.Name,
+                Surname = user.Surname
+            };
+            return View(model);
+        }
+
 
     }
 }
