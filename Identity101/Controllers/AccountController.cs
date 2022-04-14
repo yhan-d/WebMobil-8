@@ -283,10 +283,13 @@ namespace Identity101.Controllers
 
             user.Name = model.Name;
             user.Surname = model.Surname;
-            user.Email = model.Email;
-            if(user.Email != model.Email)
+           
+            bool isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
+            if(!isAdmin && user.Email != model.Email)
             {
-                await _userManager.AddToRoleAsync(user,Roles.Passive);
+                await _userManager.RemoveFromRoleAsync(user,Roles.User);
+                await _userManager.AddToRoleAsync(user, Roles.Passive);
+                user.EmailConfirmed = false;
                 //TODO: Email gönderme - Aktivasyon
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
@@ -298,8 +301,8 @@ namespace Identity101.Controllers
                     {
                         new EmailModel(){
 
-                            Adress = user.Email,
-                            Name = user.UserName
+                            Adress = model.Email,
+                            Name = user.Name
                         }
                     },
 
@@ -307,9 +310,9 @@ namespace Identity101.Controllers
                     Subject = "Confirm your email"
                 };
                 await _emailService.SendMailAsync(email);
-                //TODO: Login olma
-                return RedirectToAction("Login");
+               
             }
+            user.Email = model.Email;
             var result = await _userManager.UpdateAsync(user);
 
             if (result.Succeeded)
@@ -327,18 +330,38 @@ namespace Identity101.Controllers
         }
 
         [Authorize,HttpGet]
-        public async Task<IActionResult> ChangePassword()
+        public IActionResult ChangePassword()
         {
+            return View();
+        }
+
+        [Authorize,HttpPost]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             var user = await _userManager.FindByNameAsync(HttpContext.User.Identity!.Name);
 
-            var model = new UserProfileViewModel()
+            var result = await _userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+
+            if (result.Succeeded)
             {
-                Email = user.Email,
-                Name = user.Name,
-                Surname = user.Surname
-            };
-            return View(model);
+                //email gönder
+                TempData["Message"] = "Şifre değişikliğiniz gerçekleştirilmiştir";
+                return View();
+            }
+            else
+            {
+                var message = string.Join("<br>", result.Errors.Select(x => x.Description));
+                TempData["Message"] = message;
+                return View();
+            }
         }
+
+        
 
 
     }
