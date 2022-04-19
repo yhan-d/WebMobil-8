@@ -1,6 +1,7 @@
 using AdminTemplate.Data;
 using AdminTemplate.Models.Identity;
 using AdminTemplate.Services.Email;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
