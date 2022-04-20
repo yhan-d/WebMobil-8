@@ -15,7 +15,7 @@ public class SmtpEmailService : IEmailService
     public SmtpEmailService(IConfiguration configuration)
     {
         _configuration = configuration;
-        this.EmailSettings = _configuration.GetSection("GmailSettings").Get<EmailSettings>();
+        this.EmailSettings = _configuration.GetSection("OutlookSettings").Get<EmailSettings>();
 
     }
    

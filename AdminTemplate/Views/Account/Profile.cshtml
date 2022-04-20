@@ -1,0 +1,84 @@
+﻿@model UserProfileViewModel
+@{
+    Layout = "_Layout";
+    ViewBag.Title = "Profil";
+    
+}
+
+<div class="row">
+    <div class="offset-1 col-lg-10 ">
+        <div class="card">
+            <div class="card-header"><h2 class="card-title">Edit profile</h2></div>
+            <div class="card-body">
+                <div class="e-profile">
+                    <div class="row">
+                        <div class="col-12 col-sm-auto mb-3">
+                            <div class="mx-auto img-2">
+                                <img src="..\..\assets\images\faces\male\16.jpeg" alt="">
+                            </div>
+                        </div>
+                        <div class="col d-flex flex-column flex-sm-row justify-content-between mb-3">
+                            <div class="text-center text-sm-left mb-sm-0">
+                                <div>
+                                    <button class="btn btn-primary btn-block mt-5" type="button">
+                                        <i class="fa fa-fw fa-camera"></i>
+                                        <span>Change Photo</span>
+                                    </button>
+                                </div>
+                                <button class="btn btn-secondary btn-block mt-2" type="button">
+                                    <i class="fa fa-fw fa-camera"></i>
+                                    <span>Remove Photo</span>
+                                </button>
+                            </div>
+                            <div class="text-center text-sm-right">
+                                <span class="badge badge-secondary">administrator</span>
+                                <div class="text-muted"><small>Joined 23 Oct 2018</small></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-content pt-3">
+                        <div class="tab-pane active">
+                            <form asp-controller="Account" asp-action="Profile" method="post" class="form">
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label class="form-label">Name</label>
+                                                    <input type="text" class="form-control" asp-for="Name" placeholder="Name" value="@Model.Name">
+                                                    <span asp-validation-for="Name" class="text text-danger"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col">
+                                                <div class="form-group">
+                                                    <label class="form-label">Surname</label>
+                                                    <input class="form-control" asp-for="Surname" placeholder="Surname" value="@Model.Surname">
+                                                    <span asp-validation-for="Surname" class="text text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-label">Email</label>
+                                                    <input class="form-control" asp-for="Email" >
+                                                    <span asp-validation-for="Email" class="text text-danger"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                                <div class="float-right mt-0 mb-0">
+                                    <button class="btn btn-primary " type="submit">Update Profile</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

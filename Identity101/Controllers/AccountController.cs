@@ -18,7 +18,7 @@ namespace Identity101.Controllers
         private readonly IEmailService _emailService;
         private readonly RoleManager<ApplicationRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public AccountController(UserManager<ApplicationUser> userManager,IEmailService emailService,RoleManager<ApplicationRole> roleManager,SignInManager<ApplicationUser> signInManager)
+        public AccountController(UserManager<ApplicationUser> userManager, IEmailService emailService, RoleManager<ApplicationRole> roleManager, SignInManager<ApplicationUser> signInManager)
         {
             _userManager = userManager;
             _emailService = emailService;
@@ -26,10 +26,10 @@ namespace Identity101.Controllers
             _signInManager = signInManager;
             CheckRoles();
         }
-        
+
         private void CheckRoles()
         {
-            foreach(var item in Roles.RoleList)
+            foreach (var item in Roles.RoleList)
             {
                 if (_roleManager.RoleExistsAsync(item).Result)
                     continue;
@@ -68,12 +68,12 @@ namespace Identity101.Controllers
             {
                 //Rol Atma
                 var count = _userManager.Users.Count();
-                result = await _userManager.AddToRoleAsync(user,count == 1 ? Roles.Admin : Roles.Passive);
+                result = await _userManager.AddToRoleAsync(user, count == 1 ? Roles.Admin : Roles.Passive);
                 //TODO: Email gönderme - Aktivasyon
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Action("ConfirmEmail","Account",new { userId = user.Id, code = code },Request.Scheme);
-                
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, Request.Scheme);
+
                 var email = new MailModel()
                 {
                     To = new List<EmailModel>
@@ -99,12 +99,12 @@ namespace Identity101.Controllers
         }
         public async Task<IActionResult> ConfirmEmail(string userId, string code)
         {
-            if(userId == null || code == null)
+            if (userId == null || code == null)
             {
                 return RedirectToAction("Index", "Home");
             }
             var user = await _userManager.FindByIdAsync(userId);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound($"Unable to load user with ID '{userId}'.");
             }
@@ -116,8 +116,8 @@ namespace Identity101.Controllers
 
             if (result.Succeeded && _userManager.IsInRoleAsync(user, Roles.Passive).Result)
             {
-                await _userManager.RemoveFromRoleAsync(user,Roles.Passive);
-                await _userManager.AddToRoleAsync(user,Roles.User);
+                await _userManager.RemoveFromRoleAsync(user, Roles.Passive);
+                await _userManager.AddToRoleAsync(user, Roles.User);
             }
             return View();
         }
@@ -127,38 +127,37 @@ namespace Identity101.Controllers
         {
             return View();
         }
-        
+
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
             if (!ModelState.IsValid) { return View(model); }
-            
-                var user = await _userManager.FindByNameAsync(model.UserName);
 
-                var result =  await _signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, true);
+            var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, true);
+
             if (result.Succeeded)
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if(result.IsLockedOut)
+            else if (result.IsLockedOut)
             {
-                 // TODO: Kilitlenmişse ne yapılacağı
+                // TODO: Kilitlenmişse ne yapılacağı
             }
-            else if(result.RequiresTwoFactor)
+            else if (result.RequiresTwoFactor)
             {
                 //TODO: 2fa yönlendirmesi yapılacak
             }
 
-                ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifre hatalı");
-                return View(model);
-           
+            ModelState.AddModelError(string.Empty, "Kullanıcı adı veya şifre hatalı");
+            return View(model);
+
         }
-        
+
         [Authorize]
         public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToAction("Index","Home");
+            return RedirectToAction("Index", "Home");
         }
 
         public IActionResult AccessDenied()
@@ -176,7 +175,7 @@ namespace Identity101.Controllers
         public async Task<IActionResult> ResetPassword(string email)
         {
             var user = await _userManager.FindByEmailAsync(email);
-            if(user == null)
+            if (user == null)
             {
                 ViewBag.Message = "Sıfırlama mailiniz gönderilmiştir";
             }
@@ -185,7 +184,7 @@ namespace Identity101.Controllers
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
                 var callbackUrl = Url.Action("ConfirmResetPassword", "Account", new
-                { userId = user.Id,code = code }, Request.Scheme );
+                { userId = user.Id, code = code }, Request.Scheme);
 
                 var emailMessage = new MailModel()
                 {
@@ -193,7 +192,7 @@ namespace Identity101.Controllers
                     {
                         new EmailModel(){
 
-                            Adress = user.Email, 
+                            Adress = user.Email,
                             Name = user.UserName
                         }
                     },
@@ -205,7 +204,7 @@ namespace Identity101.Controllers
 
                 ViewBag.Message = "Our password update instruction has been sent to your e-mail.";
             }
-           
+
             return View();
 
         }
@@ -213,7 +212,7 @@ namespace Identity101.Controllers
         [HttpGet]
         public IActionResult ConfirmResetPassword(string userId, string code)
         {
-            if(string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
+            if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(code))
             {
                 return BadRequest("Hatalı istek");
             }
@@ -234,7 +233,7 @@ namespace Identity101.Controllers
 
             var user = await _userManager.FindByIdAsync(model.UserId);
 
-            if(user == null)
+            if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Kullanıcı bulunamadı");
                 return View();
@@ -246,7 +245,7 @@ namespace Identity101.Controllers
             {
                 //email gönder
                 TempData["Message"] = "Şifre değişikliğiniz gerçekleştirilmiştir";
-                return RedirectToAction("Login","Account");
+                return RedirectToAction("Login", "Account");
             }
             else
             {
@@ -254,7 +253,7 @@ namespace Identity101.Controllers
                 TempData["Message"] = message;
                 return View();
             }
-            
+
         }
 
         [Authorize]
@@ -272,7 +271,7 @@ namespace Identity101.Controllers
             return View(model);
         }
 
-        [Authorize,HttpPost]
+        [Authorize, HttpPost]
         public async Task<IActionResult> Profile(UserProfileViewModel model)
         {
             if (!ModelState.IsValid)
@@ -283,11 +282,11 @@ namespace Identity101.Controllers
 
             user.Name = model.Name;
             user.Surname = model.Surname;
-           
+
             bool isAdmin = await _userManager.IsInRoleAsync(user, Roles.Admin);
-            if(!isAdmin && user.Email != model.Email)
+            if (!isAdmin && user.Email != model.Email)
             {
-                await _userManager.RemoveFromRoleAsync(user,Roles.User);
+                await _userManager.RemoveFromRoleAsync(user, Roles.User);
                 await _userManager.AddToRoleAsync(user, Roles.Passive);
                 user.EmailConfirmed = false;
                 //TODO: Email gönderme - Aktivasyon
@@ -310,7 +309,7 @@ namespace Identity101.Controllers
                     Subject = "Confirm your email"
                 };
                 await _emailService.SendMailAsync(email);
-               
+
             }
             user.Email = model.Email;
             var result = await _userManager.UpdateAsync(user);
@@ -326,16 +325,16 @@ namespace Identity101.Controllers
             }
 
             return View(model);
-            
+
         }
 
-        [Authorize,HttpGet]
+        [Authorize, HttpGet]
         public IActionResult ChangePassword()
         {
             return View();
         }
 
-        [Authorize,HttpPost]
+        [Authorize, HttpPost]
         public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -361,7 +360,7 @@ namespace Identity101.Controllers
             }
         }
 
-        
+
 
 
     }
