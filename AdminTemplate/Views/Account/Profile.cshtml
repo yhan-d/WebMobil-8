@@ -1,7 +1,8 @@
-﻿@model UserProfileViewModel
+﻿@using AdminTemplate.Models.Role
+@model UserProfileViewModel
 @{
     Layout = "_Layout";
-    ViewBag.Title = "Profil";
+    ViewBag.Title = "Profile";
     
 }
 
@@ -31,8 +32,22 @@
                                 </button>
                             </div>
                             <div class="text-center text-sm-right">
-                                <span class="badge badge-secondary">administrator</span>
-                                <div class="text-muted"><small>Joined 23 Oct 2018</small></div>
+
+                                    @if
+                                    (
+                                    @User.IsInRole(Roles.Admin)
+                                    )
+                                {
+                                        <span class="badge badge-secondary">Administrator</span>
+                                    }else if( @User.IsInRole(Roles.User) )
+                                    {
+                                        <span class="badge badge-secondary">User</span>
+                                }
+                                    else if(@User.IsInRole(Roles.Passive)){
+                                        <span class="badge badge-secondary">Passive User</span>
+                                    }
+
+                                    <div class="text-muted"><small>Joined @Model.RegisterDate.ToShortDateString()</small></div>
                             </div>
                         </div>
                     </div>
@@ -72,6 +87,7 @@
                                 </div>
                                 <div class="float-right mt-0 mb-0">
                                     <button class="btn btn-primary " type="submit">Update Profile</button>
+                                    <a asp-controller="Account" asp-action="ChangePassword" class="btn btn-danger">Change Password</a>
                                 </div>
                             </form>
                         </div>

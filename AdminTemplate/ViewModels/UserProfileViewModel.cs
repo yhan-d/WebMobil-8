@@ -17,5 +17,8 @@ namespace AdminTemplate.ViewModels
         [Required(ErrorMessage ="E-posta alanı gereklidir. ")]
         [EmailAddress]
         public string Email { get; set; }
+
+        
+        public DateTime RegisterDate { get; set; }
     }
 }
