@@ -244,7 +244,7 @@ namespace AdminTemplate.Controllers
             {
                 //email gönder
                 TempData["Message"] = "Şifre değişikliğiniz gerçekleştirilmiştir";
-                return View();
+                return RedirectToAction("Login","Account");
             }
 
             var message = string.Join("<br>", result.Errors.Select(x => x.Description));
