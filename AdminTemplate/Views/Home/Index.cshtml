@@ -1,4 +1,14 @@
-﻿@{
-    ViewBag.Title = "Ana Sayfa";
+﻿@model AdminTemplate.ViewModels.Dashboard.DashboardViewModels
+@{
+    ViewBag.Title = "Homepage";
 }
-<h1>İlk tema giydirme işlemimiz hayırlı olsun</h1>
+<h1>İlk tema</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <partial name="Dashboard/_ProductReportPartialView" model="Model.ProductReportViewModel"></partial>
+        </div>
+
+    </div>
+    
+</div>
