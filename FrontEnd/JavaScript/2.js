@@ -57,7 +57,7 @@ var diziDongu2 = () =>{
 }
 
 var a = [1, 2, 3, 4, 5, 6, 6, 8, 9, 10, 2, 2]; //return 6
-var b = [2, 4, 5, 3, 1, 1, 3, 4, 5, 5]; //retrun 1
+var b = [2, 4, 5, 3, 1, 1, 3, 4, 5, 5]; //return 1
 
 function checkRepeat(array) {
   var distinct = [];
@@ -73,5 +73,4 @@ function checkRepeat(array) {
 
 console.log(checkRepeat(a));
 console.log(checkRepeat(b));
-
 
