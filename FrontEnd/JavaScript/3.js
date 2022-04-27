@@ -13,3 +13,11 @@ var changeColor = () => {
      pickerDiv.style.backgroundColor = color;
      pickerDiv.style.color = colorRev;
  }
+
+ var copyClipboard = () => { // 
+    var pickerDiv = document.getElementById("picker");
+    navigator.clipboard.writeText(pickerDiv.innerHTML);
+    alert("Copied: "+pickerDiv.innerHTML);
+
+ }
+ changeColor();
