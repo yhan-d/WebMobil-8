@@ -17,7 +17,17 @@ var changeColor = () => {
  var copyClipboard = () => { // 
     var pickerDiv = document.getElementById("picker");
     navigator.clipboard.writeText(pickerDiv.innerHTML);
-    alert("Copied: "+pickerDiv.innerHTML);
+    
+    Swal.fire({
+      icon: 'info',
+      title: 'Copied...',
+      text: pickerDiv.innerHTML,
+      footer: 'Web Mobil 8 classroom'
+    })
+
+    //Swal.fire("Copied: "+pickerDiv.innerHTML);
+
+    //alert("Copied: "+pickerDiv.innerHTML);
 
  }
  changeColor();
