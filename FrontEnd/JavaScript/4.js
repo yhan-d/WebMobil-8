@@ -28,7 +28,6 @@ var showPosition = (position) => {
     });
 
     map.addListener('click', (e) =>{
-        console.log(e);
         var posClick = {
             lat: e.latLng.lat(),
             lng: e.latLng.lng()
@@ -46,3 +45,4 @@ var showPosition = (position) => {
 
   
 }
+window.initMap=initMap;
